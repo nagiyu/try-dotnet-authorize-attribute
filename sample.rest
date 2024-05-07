@@ -1,0 +1,78 @@
+@host = http://localhost:50872
+
+# @name NoAttribute
+GET {{host}}/Sample/NoAttribute
+
+###
+
+# @name AllowAnonymous
+GET {{host}}/Sample/AllowAnonymous
+
+###
+
+# @name login
+POST {{host}}/Account/Login
+Content-Type: application/x-www-form-urlencoded
+
+username=User1&password=testpassword
+
+###
+
+# @name login
+POST {{host}}/Account/Login
+Content-Type: application/json
+
+{
+    "username": "User1",
+    "password": "testpassword"
+}
+
+###
+
+# @name logout
+GET {{host}}/Account/Logout
+
+###
+
+# @name Content
+GET {{host}}/Sample/Content
+
+###
+
+# Test CustomAuthorizeAttribute with User1 and Admin role
+POST {{host}}/Sample/Content HTTP/1.1
+Content-Type: application/json
+Authorization: Basic VXNlcjE6cGFzc3dvcmQ=
+
+{
+    "role": "Admin"
+}
+
+###
+
+# Test CustomAuthorizeAttribute with User2 and Manager role
+POST {{host}}/Sample/Content HTTP/1.1
+Content-Type: application/json
+Authorization: Basic VXNlcjI6cGFzc3dvcmQ=
+
+{
+    "role": "Manager"
+}
+
+###
+
+# Test CustomAuthorizeAttribute with unauthorized user
+POST {{host}}/Sample/Content HTTP/1.1
+Content-Type: application/json
+Authorization: Basic VXNlcjM6cGFzc3dvcmQ=
+
+{
+    "role": "User"
+}
+
+###
+
+# @name Authorize
+GET {{host}}/Sample/Authorize
+
+###
