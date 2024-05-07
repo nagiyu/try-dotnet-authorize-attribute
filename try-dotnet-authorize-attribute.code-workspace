@@ -10,6 +10,7 @@
             "eamodio.gitlens",
             "oderwat.indent-rainbow",
             "github.vscode-pull-request-github",
+            "wmaurer.change-case",
         ]
     },
     "settings": {
