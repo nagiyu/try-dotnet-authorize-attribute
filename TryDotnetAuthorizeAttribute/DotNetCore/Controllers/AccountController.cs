@@ -8,11 +8,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Reflection;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DotNetFramework.Controllers
 {
     public class AccountController : Controller
     {
+        [AllowAnonymous]
         public IActionResult Login()
         {
             return View();
@@ -24,6 +26,7 @@ namespace DotNetFramework.Controllers
             public string Password { get; set; }
         }
 
+        // フォームの場合
         //[HttpPost]
         //public async Task<IActionResult> Login(string username, string password)
         //{
@@ -37,7 +40,7 @@ namespace DotNetFramework.Controllers
         //    return await AuthenticateUser(model);
         //}
 
-        [HttpPost]
+        [HttpPost, AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             if (string.IsNullOrEmpty(model.Username) || string.IsNullOrEmpty(model.Password))

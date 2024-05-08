@@ -7,8 +7,8 @@ POST {{host}}/Account/Login
 Content-Type: application/json
 
 {
-    "username": "User3",
-    "password": "Password3"
+    "username": "User1",
+    "password": "Password1"
 }
 
 ###
