@@ -21,7 +21,8 @@ namespace DotNetFramework.Controllers
             return Content("AllowAnonymousAttribute");
         }
 
-        [CustomAuthorize]
+        //[CustomAuthorize]
+        [Authorize(Policy = "CustomAuthorize")]
         public ActionResult Content()
         {
             return Content("CustomAuthorizeAttribute");

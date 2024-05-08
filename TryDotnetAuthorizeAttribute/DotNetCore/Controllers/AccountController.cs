@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Reflection;
 
 namespace DotNetFramework.Controllers
 {
@@ -17,33 +18,44 @@ namespace DotNetFramework.Controllers
             return View();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Login(string username, string password)
+        public class LoginModel
         {
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            public string Username { get; set; }
+            public string Password { get; set; }
+        }
+
+        //[HttpPost]
+        //public async Task<IActionResult> Login(string username, string password)
+        //{
+        //    if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+        //    {
+        //        return new ContentResult { Content = "ユーザー名またはパスワードが入力されていません", StatusCode = StatusCodes.Status400BadRequest };
+        //    }
+
+        //    var model = new LoginModel { Username = username, Password = password };
+
+        //    return await AuthenticateUser(model);
+        //}
+
+        [HttpPost]
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
+        {
+            if (string.IsNullOrEmpty(model.Username) || string.IsNullOrEmpty(model.Password))
             {
                 return new ContentResult { Content = "ユーザー名またはパスワードが入力されていません", StatusCode = StatusCodes.Status400BadRequest };
             }
 
-            if (UserManager.UserExists(username))
+            return await AuthenticateUser(model);
+        }
+
+        private async Task<IActionResult> AuthenticateUser(LoginModel model)
+        {
+            if (UserManager.UserExists(model.Username))
             {
                 // パスワードが正しいかどうかをチェック
-                if (UserManager.IsPasswordCorrect(username, password))
+                if (UserManager.IsPasswordCorrect(model.Username, model.Password))
                 {
-                    var claims = new List<Claim>
-                    {
-                        new(ClaimTypes.Name, username)
-                    };
-
-                    var claimsIdentity = new ClaimsIdentity(
-                        claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                    var authProperties = new AuthenticationProperties();
-
-                    await HttpContext.SignInAsync(
-                        CookieAuthenticationDefaults.AuthenticationScheme, 
-                        new ClaimsPrincipal(claimsIdentity), 
-                        authProperties);
+                    await SignInUser(model.Username);
                 }
                 else
                 {
@@ -56,6 +68,24 @@ namespace DotNetFramework.Controllers
             }
 
             return new ContentResult { Content = "ログインしました", StatusCode = StatusCodes.Status200OK };
+        }
+
+        private async Task SignInUser(string username)
+        {
+            var claims = new List<Claim>
+            {
+                new(ClaimTypes.Name, username)
+            };
+
+            var claimsIdentity = new ClaimsIdentity(
+                claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var authProperties = new AuthenticationProperties();
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties);
         }
 
         public async Task<IActionResult> Logout()
