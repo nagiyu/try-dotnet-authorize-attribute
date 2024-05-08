@@ -1,12 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Principal;
-using System.Web;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DotNetFramework.Attributes
 {
-    public class CustomAuthorizeAttribute : AuthorizeAttribute
+    public class CustomAuthorizeAttribute : AuthorizeAttribute, IAuthorizationFilter
     {
         // ユーザー名またはロール名を指定します。
         public CustomAuthorizeAttribute()
@@ -15,27 +16,22 @@ namespace DotNetFramework.Attributes
             Roles = "Admin,Manager";
         }
 
-        public override void OnAuthorization(AuthorizationContext filterContext)
+        public void OnAuthorization(AuthorizationFilterContext context)
         {
-            base.OnAuthorization(filterContext);
-
             // 遷移元画面の URL をセッションに保存
-            filterContext.HttpContext.Session.Add("LogOnReturnUrl", filterContext.HttpContext.Request.RawUrl);
+            context.HttpContext.Session.SetString("LogOnReturnUrl", context.HttpContext.Request.Path);
         }
 
-        protected override bool AuthorizeCore(HttpContextBase httpContext)
+        public bool AuthorizeCore(HttpContext httpContext)
         {
             // 基底クラスのAuthorizeCoreメソッドを呼び出す
-            bool isAuthorized = base.AuthorizeCore(httpContext);
+            bool isAuthorized = httpContext.User.Identity.IsAuthenticated;
             if (!isAuthorized)
             {
                 return false;
             }
 
-            if (httpContext == null)
-            {
-                throw new ArgumentNullException("httpContext");
-            }
+            ArgumentNullException.ThrowIfNull(httpContext);
 
             // ユーザーが認証されているかどうかを確認します。
             if (!httpContext.User.Identity.IsAuthenticated)
