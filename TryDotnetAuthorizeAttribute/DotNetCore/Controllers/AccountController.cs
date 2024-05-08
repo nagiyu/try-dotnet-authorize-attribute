@@ -2,25 +2,27 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using System.Web.Security;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace DotNetFramework.Controllers
 {
     public class AccountController : Controller
     {
-        public ActionResult Login()
+        public IActionResult Login()
         {
             return View();
         }
 
         [HttpPost]
-        public ActionResult Login(string username, string password)
+        public async Task<IActionResult> Login(string username, string password)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                return Content("ユーザー名またはパスワードが入力されていません");
+                return new ContentResult { Content = "ユーザー名またはパスワードが入力されていません", StatusCode = StatusCodes.Status400BadRequest };
             }
 
             if (UserManager.UserExists(username))
@@ -28,27 +30,38 @@ namespace DotNetFramework.Controllers
                 // パスワードが正しいかどうかをチェック
                 if (UserManager.IsPasswordCorrect(username, password))
                 {
-                    // TODO ASP.NET membership should be replaced with ASP.NET Core identity. For more details see https://docs.microsoft.com/aspnet/core/migration/proper-to-2x/membership-to-core-identity.
-                    FormsAuthentication.SetAuthCookie(username, true);
+                    var claims = new List<Claim>
+                    {
+                        new(ClaimTypes.Name, username)
+                    };
+
+                    var claimsIdentity = new ClaimsIdentity(
+                        claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                    var authProperties = new AuthenticationProperties();
+
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme, 
+                        new ClaimsPrincipal(claimsIdentity), 
+                        authProperties);
                 }
                 else
                 {
-                    return Content("パスワードが正しくありません");
+                    return new ContentResult { Content = "パスワードが正しくありません", StatusCode = StatusCodes.Status401Unauthorized };
                 }
             }
             else
             {
-                return Content("ユーザーが存在しません");
+                return new ContentResult { Content = "ユーザーが存在しません", StatusCode = StatusCodes.Status404NotFound };
             }
 
-            return Content("ログインしました");
+            return new ContentResult { Content = "ログインしました", StatusCode = StatusCodes.Status200OK };
         }
 
-        public ActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            // TODO ASP.NET membership should be replaced with ASP.NET Core identity. For more details see https://docs.microsoft.com/aspnet/core/migration/proper-to-2x/membership-to-core-identity.
-            FormsAuthentication.SignOut();
-            return Content("ログアウトしました");
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return new ContentResult { Content = "ログアウトしました", StatusCode = StatusCodes.Status200OK };
         }
     }
 }
