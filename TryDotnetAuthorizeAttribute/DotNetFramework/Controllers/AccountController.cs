@@ -20,8 +20,7 @@ namespace DotNetFramework.Controllers
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                Console.WriteLine("ユーザー名またはパスワードが入力されていません");
-                return RedirectToAction("Index", "Home");
+                return Content("ユーザー名またはパスワードが入力されていません");
             }
 
             if (UserManager.UserExists(username))
@@ -29,31 +28,25 @@ namespace DotNetFramework.Controllers
                 // パスワードが正しいかどうかをチェック
                 if (UserManager.IsPasswordCorrect(username, password))
                 {
-                    Console.WriteLine("ログイン成功");
                     FormsAuthentication.SetAuthCookie(username, true);
                 }
                 else
                 {
-                    Console.WriteLine("パスワードが正しくありません");
+                    return Content("パスワードが正しくありません");
                 }
             }
             else
             {
-                Console.WriteLine("ユーザーが存在しません");
+                return Content("ユーザーが存在しません");
             }
 
-            if (FormsAuthentication.GetRedirectUrl(username, true) != null)
-            {
-                return Redirect(FormsAuthentication.GetRedirectUrl(username, true));
-            }
-
-            return RedirectToAction("Index", "Home");
+            return Content("ログインしました");
         }
 
         public ActionResult Logout()
         {
             FormsAuthentication.SignOut();
-            return RedirectToAction("Index", "Home");
+            return Content("ログアウトしました");
         }
     }
 }
