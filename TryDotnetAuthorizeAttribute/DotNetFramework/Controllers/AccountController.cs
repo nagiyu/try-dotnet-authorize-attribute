@@ -10,25 +10,12 @@ namespace DotNetFramework.Controllers
 {
     public class AccountController : Controller
     {
-        //[HttpPost]
-        //public ActionResult Login(string username, string password)
-        //{
-        //    FormsAuthentication.SetAuthCookie(username, true);
-        //    return Content("Login");
+        public ActionResult Login()
+        {
+            return View();
+        }
 
-        //    //if (Membership.ValidateUser(username, password))
-        //    //{
-        //    //    FormsAuthentication.SetAuthCookie(username, false);
-        //    //    return RedirectToAction("Index", "Home");
-        //    //}
-        //    //else
-        //    //{
-        //    //    ModelState.AddModelError("", "Invalid username or password.");
-        //    //    return View();
-        //    //}
-        //}
-
-        [HttpGet]
+        [HttpPost]
         public ActionResult Login(string username, string password)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
@@ -53,6 +40,11 @@ namespace DotNetFramework.Controllers
             else
             {
                 Console.WriteLine("ユーザーが存在しません");
+            }
+
+            if (FormsAuthentication.GetRedirectUrl(username, true) != null)
+            {
+                return Redirect(FormsAuthentication.GetRedirectUrl(username, true));
             }
 
             return RedirectToAction("Index", "Home");
