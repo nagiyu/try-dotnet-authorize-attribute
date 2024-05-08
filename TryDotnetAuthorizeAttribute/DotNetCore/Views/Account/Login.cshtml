@@ -1,0 +1,36 @@
+﻿@using DotNetFramework.Models;
+
+@model LoginViewModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Login</title>
+</head>
+<body>
+    <div>
+        @using (Html.BeginForm("Login", "Account", FormMethod.Post))
+        {
+            <div class="form-item">
+                <Label>ユーザーID</Label>
+                @Html.TextBoxFor(model => model.Username)
+                @Html.ValidationMessageFor(model => model.Username)
+            </div>
+            <div class="form-item">
+                <Label>パスワード</Label>
+                @Html.PasswordFor(model => model.Password)
+                @Html.ValidationMessageFor(model => model.Password)
+            </div>
+            <div class="button-panel">
+                <input type="submit" class="button" value="ログイン" />
+            </div>
+        }
+    </div>
+</body>
+</html>

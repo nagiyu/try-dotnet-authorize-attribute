@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonAuthService", "Common
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCore", "DotNetCore\DotNetCore.csproj", "{926898F2-1DFF-432C-B210-F2F48F1413C6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetCoreWebApplication", "DotNetCoreWebApplication\DotNetCoreWebApplication.csproj", "{523C1C24-DDD6-4201-8316-7FA51169C283}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{926898F2-1DFF-432C-B210-F2F48F1413C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{926898F2-1DFF-432C-B210-F2F48F1413C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{926898F2-1DFF-432C-B210-F2F48F1413C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{523C1C24-DDD6-4201-8316-7FA51169C283}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{523C1C24-DDD6-4201-8316-7FA51169C283}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{523C1C24-DDD6-4201-8316-7FA51169C283}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{523C1C24-DDD6-4201-8316-7FA51169C283}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
